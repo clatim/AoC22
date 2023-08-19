@@ -1,15 +1,10 @@
+use itertools::Itertools;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-use itertools::Itertools;
 
-static ANY_OVERLAP: bool = true;
+pub fn run_day4(part: u8) {
+    let reader = BufReader::new(File::open("inp/day4/input.txt").expect("File not found."));
 
-pub fn run_day4() {
-    let reader = BufReader::new(
-        File::open("inp/day4/input.txt")
-        .expect("File not found.")
-        );
-    
     let mut sum = 0;
 
     for line in reader.lines() {
@@ -21,7 +16,7 @@ pub fn run_day4() {
             .unwrap();
         let range1 = extract_start_end(elf1);
         let range2 = extract_start_end(elf2);
-        if ANY_OVERLAP {
+        if part == 2 {
             if any_overlap(range1, range2) || any_overlap(range2, range1) {
                 sum += 1;
             }
@@ -30,14 +25,13 @@ pub fn run_day4() {
                 sum += 1;
             }
         }
-
     }
 
     println!("The number of subsets is {sum}");
 }
 
 fn extract_start_end(to_clean: String) -> (i32, i32) {
-    to_clean 
+    to_clean
         .split("-")
         .map(|n| n.parse::<i32>().unwrap())
         .collect_tuple()

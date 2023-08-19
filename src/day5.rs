@@ -1,8 +1,6 @@
 use regex::Regex;
 
-static PART_TWO: bool = true;
-
-pub fn run_day5() {
+pub fn run_day5(part: u8) {
     let input = include_str!("../inp/day5/input.txt");
     // Finds the numbers of stacks.
     // I don't actually think this is needed.
@@ -23,7 +21,7 @@ pub fn run_day5() {
     for _ in 0..num_stacks {
         stack.push(Vec::new());
     }
- 
+
     let re = Regex::new(r" {4}|[A-Z]").unwrap();
     let numbers = Regex::new(r"[1-9]").unwrap();
     for line in input.lines() {
@@ -46,7 +44,7 @@ pub fn run_day5() {
     for line in input.lines() {
         println!("{line}");
         if !movement.is_match(line) {
-            continue
+            continue;
         }
 
         for cap in movement.captures_iter(line) {
@@ -54,12 +52,11 @@ pub fn run_day5() {
             let num_move = cap[1].parse::<usize>().unwrap();
             let from = cap[2].parse::<usize>().unwrap() - 1;
             let to = cap[3].parse::<usize>().unwrap() - 1;
-            if PART_TWO {
-                let start = stack[from].len()-num_move;
-                let mut to_move = stack[from]
-                    .split_off(start);
+            if part == 2 {
+                let start = stack[from].len() - num_move;
+                let mut to_move = stack[from].split_off(start);
                 stack[to].append(&mut to_move);
-            } else { 
+            } else {
                 for _ in 0..num_move {
                     match stack[from].pop() {
                         Some(to_move) => stack[to].push(to_move),
@@ -76,7 +73,4 @@ pub fn run_day5() {
         answer.push_str(column.pop().unwrap());
     }
     println!("The answer is {answer}");
-    
-
 }
-

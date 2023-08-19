@@ -1,17 +1,14 @@
+use itertools::Itertools;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
-use itertools::Itertools;
 
-static BADGE_TIME: bool = true; 
-
-pub fn run_day3() {
-    let file = File::open("inp/day3/input.txt")
-        .expect("File not found.");
+pub fn run_day3(part: u8) {
+    let file = File::open("inp/day3/input.txt").expect("File not found.");
     let reader = BufReader::new(file);
 
     let mut sum = 0;
 
-    if BADGE_TIME {
+    if part == 2 {
         for (elf1, elf2, elf3) in reader.lines().tuples() {
             let shared_1_and_2 = &shared_items(&elf1.unwrap(), &elf2.unwrap())
                 .iter()
@@ -27,11 +24,11 @@ pub fn run_day3() {
             // Make sure that the backpack contains an even number of things.
             assert!(length % 2 == 0);
 
-            let first_comp = &contents[..length/2];
-            let second_comp = &contents[length/2..];
+            let first_comp = &contents[..length / 2];
+            let second_comp = &contents[length / 2..];
 
             // Sometimes the same thing can be in the bag multiple times.
-            // I only want to know WHAT matches, I don't care how many times 
+            // I only want to know WHAT matches, I don't care how many times
             // it appears.
             // Therefore, just get the first entry of the Vec of characters that match.
             let contains = shared_items(first_comp, second_comp)[0];
@@ -44,9 +41,7 @@ pub fn run_day3() {
 
 fn shared_items(first: &str, second: &str) -> Vec<char> {
     // Finds characters that are shared between first and second
-    second.chars()
-        .filter(|c| first.contains(*c))
-        .collect()
+    second.chars().filter(|c| first.contains(*c)).collect()
 }
 
 fn convert_to_priority(item: char) -> u32 {

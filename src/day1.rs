@@ -1,13 +1,9 @@
 use std::fs::File;
-use std::io::BufReader;
 use std::io::BufRead;
+use std::io::BufReader;
 
-static SINGLE_ELF: bool = false;
-
-pub fn run_day1() {
-
-    let file = File::open("inp/day1/input.txt")
-        .expect("File not found.");
+pub fn run_day1(part: u8) {
+    let file = File::open("inp/day1/input.txt").expect("File not found.");
     let reader = BufReader::new(file);
 
     let mut current_elf: i32 = 0;
@@ -18,22 +14,19 @@ pub fn run_day1() {
             Err(_) => {
                 all_elves.push(current_elf);
                 current_elf = 0;
-            },
+            }
         };
     }
     // Don't forget about the last elf!
     all_elves.push(current_elf);
     println!("The elves are carrying all these calories! {all_elves:?}");
 
-    if SINGLE_ELF {
+    if part == 1 {
         // Now find the maximum elf
-        let big_elf = all_elves
-            .iter()
-            .max()
-            .unwrap();
+        let big_elf = all_elves.iter().max().unwrap();
         println!("The biggest elf is {big_elf:?}");
     } else {
-        let mut  total_calories = 0;
+        let mut total_calories = 0;
         for _ in 1..=3 {
             let this_elf = all_elves
                 .iter()
@@ -46,6 +39,4 @@ pub fn run_day1() {
         }
         println!("The total calores are {total_calories}");
     }
-
 }
-
