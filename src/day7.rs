@@ -7,19 +7,16 @@ pub fn run(input: &str, part: u8) -> u32 {
 
     let mut sizes: HashMap<String, u32> = HashMap::new();
     // println!("{}", input);
-    let mut commands = input.split('$').enumerate();
+    let mut commands = input.split('$');
+    // Skip empty line
     commands.next();
-    commands.next();
-    // Will always want a root
-    let mut cwd = vec![String::from("root")];
-    sizes.insert(String::from("root"), 0);
+    let mut cwd = vec![];
 
-    for (ii, line) in commands {
-        // println!("{}: {:?}", ii, line);
+    for line in commands {
         let (command, result) = line.split_once('\n').unwrap();
         let command = String::from(command);
-        // println!("command: {}", command);
-        // println!("result: {}", result);
+        println!("command: {}", command);
+        println!("result: {}", result);
 
         let command_words = command.trim().split(' ').collect::<Vec<&str>>();
         // println!("command_words = {:?}", command_words);
@@ -42,12 +39,16 @@ pub fn run(input: &str, part: u8) -> u32 {
                     if left == "dir" {
                         // println!("Add a dir called {}", right);
                     } else {
-                        let size: u32 = left.parse().unwrap();
+                        let size: u32 = left.parse().expect("First entry should be an integer.");
 
-                        for dir in cwd.iter() {
-                            let current_size = sizes.entry(dir.clone()).or_insert(0);
-                            *current_size += size;
+                        for idx in 0..cwd.len() {
+                            let path = cwd[..=idx].join("/");
+                            *sizes.entry(path).or_insert(0) += size;
                         }
+                        // for dir in cwd.iter() {
+                        //     let dir_key = format!("{}_{}", dir, cwd.len());
+                        //     *sizes.entry(dir_key).or_insert(0) += size;
+                        // }
                         println!(
                             "Add a file called {} with size {} to {:?}",
                             right, size, cwd,
@@ -61,7 +62,10 @@ pub fn run(input: &str, part: u8) -> u32 {
     println!("\n");
     println!("The directory sizes are:");
     for (key, val) in sizes.iter() {
-        println!("dir {key} size {val}");
+        // println!("dir {key} size {val}");
+        if val < &100_000 {
+            println!("{}", val);
+        }
     }
 
     if part == 1 {
