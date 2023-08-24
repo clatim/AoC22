@@ -15,8 +15,8 @@ pub fn run(input: &str, part: u8) -> u32 {
     for line in commands {
         let (command, result) = line.split_once('\n').unwrap();
         let command = String::from(command);
-        println!("command: {}", command);
-        println!("result: {}", result);
+        // println!("command: {}", command);
+        // println!("result: {}", result);
 
         let command_words = command.trim().split(' ').collect::<Vec<&str>>();
         // println!("command_words = {:?}", command_words);
@@ -31,40 +31,18 @@ pub fn run(input: &str, part: u8) -> u32 {
             }
             println!("The current working directory is {}", cwd.join("/"));
         } else if part1 == "ls" {
-            let words = result.split('\n');
-            // println!("{:?}", words.clone().collect::<Vec<&str>>());
-            for word in words {
-                if let Some((left, right)) = word.split_once(' ') {
-                    // println!("left: {}, right: {}", left, right);
-                    if left == "dir" {
-                        // println!("Add a dir called {}", right);
-                    } else {
+            for word in result.split('\n') {
+                if let Some((left, _)) = word.split_once(' ') {
+                    if left != "dir" {
                         let size: u32 = left.parse().expect("First entry should be an integer.");
 
                         for idx in 0..cwd.len() {
                             let path = cwd[..=idx].join("/");
                             *sizes.entry(path).or_insert(0) += size;
                         }
-                        // for dir in cwd.iter() {
-                        //     let dir_key = format!("{}_{}", dir, cwd.len());
-                        //     *sizes.entry(dir_key).or_insert(0) += size;
-                        // }
-                        println!(
-                            "Add a file called {} with size {} to {:?}",
-                            right, size, cwd,
-                        );
                     }
                 }
             }
-        }
-    }
-
-    println!("\n");
-    println!("The directory sizes are:");
-    for (key, val) in sizes.iter() {
-        // println!("dir {key} size {val}");
-        if val < &100_000 {
-            println!("{}", val);
         }
     }
 
