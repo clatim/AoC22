@@ -1,11 +1,10 @@
 use std::collections::HashMap;
 
-pub fn run(input: &str, part: u8) -> u32 {
-    if part != 1 {
-        panic!("Day 7 has only had the first part implemented.");
-    }
+static DISC_SIZE: u64 = 70_000_000;
+static REQUIRED_SPACE: u64 = 30_000_000;
 
-    let mut sizes: HashMap<String, u32> = HashMap::new();
+pub fn run(input: &str, part: u8) -> u64 {
+    let mut sizes: HashMap<String, u64> = HashMap::new();
     // println!("{}", input);
     let mut commands = input.split('$');
     // Skip empty line
@@ -14,27 +13,27 @@ pub fn run(input: &str, part: u8) -> u32 {
 
     for line in commands {
         let (command, result) = line.split_once('\n').unwrap();
-        let command = String::from(command);
         // println!("command: {}", command);
         // println!("result: {}", result);
 
         let command_words = command.trim().split(' ').collect::<Vec<&str>>();
-        // println!("command_words = {:?}", command_words);
-        let part1 = command_words.get(0).unwrap().clone();
-        // println!("First part {}", part1);
+        let part1 = *command_words
+            .get(0)
+            .expect("There should be at least 1 entry on a command!");
+
         if part1 == "cd" {
-            let part2 = String::from(command_words.get(1).unwrap().clone());
-            if part2.as_str() == ".." {
+            let part2 = command_words.get(1).unwrap();
+            if *part2 == ".." {
                 cwd.pop();
             } else {
-                cwd.push(part2);
+                cwd.push(String::from(*part2));
             }
-            println!("The current working directory is {}", cwd.join("/"));
+            // println!("The current working directory is {}", cwd.join("/"));
         } else if part1 == "ls" {
             for word in result.split('\n') {
                 if let Some((left, _)) = word.split_once(' ') {
                     if left != "dir" {
-                        let size: u32 = left.parse().expect("First entry should be an integer.");
+                        let size: u64 = left.parse().expect("First entry should be an integer.");
 
                         for idx in 0..cwd.len() {
                             let path = cwd[..=idx].join("/");
@@ -47,7 +46,15 @@ pub fn run(input: &str, part: u8) -> u32 {
     }
 
     if part == 1 {
-        return sizes.values().filter(|v| v <= &&100_000u32).sum();
+        return sizes.values().filter(|v| v <= &&100_000u64).sum();
+    } else if part == 2 {
+        let free_memory = DISC_SIZE - sizes.get("/").unwrap();
+        return sizes
+            .values()
+            .filter(|v| free_memory + **v > REQUIRED_SPACE)
+            .min()
+            .expect("The iterator should not be empty.")
+            .clone();
     }
     return 1;
 }
@@ -56,4 +63,10 @@ pub fn run(input: &str, part: u8) -> u32 {
 fn test_part1() {
     let input = include_str!("../inp/day7/test.txt");
     assert_eq!(run(input, 1), 95437)
+}
+
+#[test]
+fn test_part2() {
+    let input = include_str!("../inp/day7/test.txt");
+    assert_eq!(run(input, 2), 24933642)
 }
