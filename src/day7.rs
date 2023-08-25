@@ -5,7 +5,6 @@ static REQUIRED_SPACE: u64 = 30_000_000;
 
 pub fn run(input: &str, part: u8) -> u64 {
     let mut sizes: HashMap<String, u64> = HashMap::new();
-    // println!("{}", input);
     let mut commands = input.split('$');
     // Skip empty line
     commands.next();
@@ -13,48 +12,41 @@ pub fn run(input: &str, part: u8) -> u64 {
 
     for line in commands {
         let (command, result) = line.split_once('\n').unwrap();
-        // println!("command: {}", command);
-        // println!("result: {}", result);
+        let command_words = command.split_whitespace().collect::<Vec<&str>>();
 
-        let command_words = command.trim().split(' ').collect::<Vec<&str>>();
-        let part1 = *command_words
-            .get(0)
-            .expect("There should be at least 1 entry on a command!");
-
-        if part1 == "cd" {
-            let part2 = command_words.get(1).unwrap();
-            if *part2 == ".." {
+        match command_words[..] {
+            ["cd", ".."] => {
                 cwd.pop();
-            } else {
-                cwd.push(String::from(*part2));
             }
-            // println!("The current working directory is {}", cwd.join("/"));
-        } else if part1 == "ls" {
-            for word in result.split('\n') {
-                if let Some((left, _)) = word.split_once(' ') {
-                    if left != "dir" {
-                        let size: u64 = left.parse().expect("First entry should be an integer.");
-
-                        for idx in 0..cwd.len() {
-                            let path = cwd[..=idx].join("/");
-                            *sizes.entry(path).or_insert(0) += size;
-                        }
+            ["cd", name] => {
+                cwd.push(name);
+            }
+            ["ls"] => {
+                let sizers = result
+                    .split_whitespace()
+                    .collect::<Vec<_>>()
+                    .into_iter()
+                    .filter_map(|e| e.parse::<u64>().ok());
+                for size in sizers {
+                    for idx in 0..cwd.len() {
+                        let path = cwd[..=idx].join("/");
+                        *sizes.entry(path).or_insert(0) += size;
                     }
                 }
             }
-        }
+            _ => {}
+        };
     }
 
     if part == 1 {
-        return sizes.values().filter(|v| v <= &&100_000u64).sum();
+        return sizes.into_values().filter(|v| v <= &100_000u64).sum();
     } else if part == 2 {
         let free_memory = DISC_SIZE - sizes.get("/").unwrap();
         return sizes
-            .values()
-            .filter(|v| free_memory + **v > REQUIRED_SPACE)
+            .into_values()
+            .filter(|v| free_memory + v > REQUIRED_SPACE)
             .min()
-            .expect("The iterator should not be empty.")
-            .clone();
+            .expect("The iterator should not be empty.");
     }
     return 1;
 }
