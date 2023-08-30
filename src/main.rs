@@ -6,6 +6,7 @@ mod day4;
 mod day5;
 mod day6;
 mod day7;
+mod day8;
 
 #[derive(Parser)]
 struct Cli {
@@ -24,7 +25,6 @@ fn main() {
         part == 1 || part == 2,
         "Second command line argument (part) must be 1 or 2"
     );
-
     match cli.day {
         1 => day1::run_day1(part),
         2 => day2::run_day2(part),
@@ -38,6 +38,11 @@ fn main() {
         7 => {
             let input = include_str!("../inp/day7/input.txt");
             let ans = day7::run(input, part);
+            println!("The answer to day {} part {} is: {}!", cli.day, part, ans);
+        }
+        8 => {
+            let input = include_str!("../inp/day8/input.txt");
+            let ans = day8::run(input, part);
             println!("The answer to day {} part {} is: {}!", cli.day, part, ans);
         }
         _ => println!("I haven't done day {} yet.", cli.day),
