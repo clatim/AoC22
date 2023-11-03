@@ -20,10 +20,8 @@ pub fn run_day4(part: u8) {
             if any_overlap(range1, range2) || any_overlap(range2, range1) {
                 sum += 1;
             }
-        } else {
-            if is_subset(range1, range2) || is_subset(range2, range1) {
-                sum += 1;
-            }
+        } else if is_subset(range1, range2) || is_subset(range2, range1) {
+            sum += 1;
         }
     }
 
