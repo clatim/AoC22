@@ -10,6 +10,8 @@ mod day8;
 mod day9;
 mod day10;
 
+use crate::day10::LINE_WIDTH;
+
 #[derive(Parser)]
 struct Cli {
     // The day you want to run
@@ -55,7 +57,15 @@ fn main() {
         10 => {
             let input = include_str!("../inp/day10/input.txt");
             let ans = day10::run(input, part);
-            println!("The answer to day {} part {} is: {}!", cli.day, part, ans);
+            if part == 1 {
+                println!("The answer to day {} part {} is: {}!", cli.day, part, ans.0);
+            } else {
+                println!("The answer to day {} part {} is: {:?}!", cli.day, part, ans.1);
+                for c in 0..6 {
+                    let line = ans.1[c*LINE_WIDTH..=(c+1)*LINE_WIDTH-1].iter().collect::<String>();
+                    println!("{}", line);
+                }
+            }
         }
         _ => println!("I haven't done day {} yet.", cli.day),
     }
