@@ -8,6 +8,7 @@ mod day6;
 mod day7;
 mod day8;
 mod day9;
+mod day10;
 
 #[derive(Parser)]
 struct Cli {
@@ -49,6 +50,11 @@ fn main() {
         9 => {
             let input = include_str!("../inp/day9/input.txt");
             let ans = day9::run(input, part);
+            println!("The answer to day {} part {} is: {}!", cli.day, part, ans);
+        }
+        10 => {
+            let input = include_str!("../inp/day10/input.txt");
+            let ans = day10::run(input, part);
             println!("The answer to day {} part {} is: {}!", cli.day, part, ans);
         }
         _ => println!("I haven't done day {} yet.", cli.day),
